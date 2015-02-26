@@ -19,16 +19,24 @@ def put(name, snippet):
     return name, snippet
 
 def get(name):
-    """Retrieve the snippet with a given name."""
+    """Retrieve the snippet with a given name.
+    
+    Return False if no snippet with given name.
+    """
     logging.info("Retrieving snippet {!r}".format(name))
     cursor = connection.cursor()
-    command = "select keyword, message from snippets where keyword=%s"
+    command = "select message from snippets where keyword=%s"
     cursor.execute(command, (name, ))
     connection.commit()
     row = cursor.fetchone()
-    message = row[1]
-    logging.debug("Snippet retrieved successfully.")
-    return message
+    if not row:
+        # No snippet was found with that name. 
+        logging.debug("No Snippet found with name {}".format(str(name)))
+        return False
+    else: 
+        message = row[0]
+        logging.debug("Snippet retrieved successfully.")
+        return message
 
 
 def main():
