@@ -5,17 +5,15 @@ import argparse
 # Set the log output file, and the log level
 logging.basicConfig(filename="snippets.log", level=logging.DEBUG)
 
-def put(name, snippet, overwrite=False):
+def put(name, snippet):
     """Store a snippet with an associated name.
     
     If successful, returns the name and the snippet
     If collision with existing name, returns False
-    Overwrite value is optional boolean
-    Overwrite = True will overwrite any existing collision
     """
     
     logging.error("FIXME: Unimplemented - put({!r}, {!r})".format(name, snippet))
-    return False
+    return name, snippet
 
 def get(name):
     """Retrieve the snippet with a given name.
@@ -23,7 +21,7 @@ def get(name):
     If there is no such snippet, returns False; otherwise, returns the snippet.
     """
     logging.error("FIXME: Unimplemented - get({!r})".format(name))
-    return False
+    return ""
 
 def dir(mask="?"):
     """Get a list of snippet tags, filtered by any given mask
@@ -31,7 +29,7 @@ def dir(mask="?"):
     If no mask is provided, all stored snippets are returned.
     """
     logging.error("FIXME: Unimplemented - dir({!r})".format(mask))
-    return False
+    return ""
 
 def main():
     """Main function"""
@@ -51,10 +49,21 @@ def main():
     get_parser = subparsers.add_parser("get", help="Retrieve a snippet")
     get_parser.add_argument("name", help="The name of the snippet")
     
-    
-    
     arguments = parser.parse_args(sys.argv[1:])
     
+    # Convert parsed arguments from Namespace to dictionary
+    # Doing so allows command(**arguments) later
+    arguments = vars(arguments)
+    
+    command = arguments.pop("command")
+
+    if command == "put":
+        name, snippet = put(**arguments)
+        print("Stored {!r} as {!r}".format(snippet, name))
+    elif command == "get":
+        snippet = get(**arguments)
+        print("Retrieved snippet: {!r}".format(snippet))
+        
 if __name__ == "__main__":
     main()
     
